@@ -11,14 +11,14 @@
 
 ## Phase 2: Server & API
 
-- [ ] Create `server.ts` with Bun HTTP server listening on port 4455 (localhost only)
-- [ ] Implement static file serving for `public/` directory
-- [ ] Implement `GET /overlay` route — serves `public/overlay.html`
-- [ ] Implement `GET /admin` route — serves `public/admin.html`
-- [ ] Implement `GET /api/stats` route — returns revenue + config data as JSON
-- [ ] Implement `POST /api/config` route — validates password, updates config, persists to `data.json`
-- [ ] Implement `data.json` read/write helpers (load on startup, write on config change)
-- [ ] Add input validation on `POST /api/config` (valid displayMode, positive numbers, etc.)
+- [x] Create `server.ts` with Bun HTTP server listening on port 4455 (localhost only)
+- [x] Implement static file serving for `public/` directory
+- [x] Implement `GET /overlay` route — serves `public/overlay.html`
+- [x] Implement `GET /admin` route — serves `public/admin.html`
+- [x] Implement `GET /api/stats` route — returns revenue + config data as JSON
+- [x] Implement `POST /api/config` route — validates password, updates config, persists to `data.json`
+- [x] Implement `data.json` read/write helpers (load on startup, write on config change)
+- [x] Add input validation on `POST /api/config` (valid displayMode, positive numbers, etc.)
 
 ## Phase 3: Stripe Integration
 

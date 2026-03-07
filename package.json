@@ -1,6 +1,6 @@
 {
   "name": "obs-rev-overlay",
-  "module": "index.ts",
+  "module": "server.ts",
   "type": "module",
   "devDependencies": {
     "@types/bun": "latest"
