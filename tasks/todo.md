@@ -22,14 +22,14 @@
 
 ## Phase 3: Stripe Integration
 
-- [ ] Load `STRIPE_SECRET_KEY` from `.env`
-- [ ] Implement initial full balance fetch on server start (sum all `charge` and `refund` balance transactions)
-- [ ] Handle Stripe pagination for all-time history (auto_paging)
-- [ ] Cache the computed net revenue in memory
-- [ ] Implement 30-second polling loop that fetches only new transactions since last check (`created` filter)
-- [ ] Update cached revenue total incrementally from new transactions
-- [ ] Handle Stripe API errors gracefully (log error, keep last known value)
-- [ ] Expose cached revenue via `GET /api/stats`
+- [x] Load `STRIPE_SECRET_KEY` from `.env`
+- [x] Implement initial full balance fetch on server start (sum all `charge` and `refund` balance transactions)
+- [x] Handle Stripe pagination for all-time history (auto_paging)
+- [x] Cache the computed net revenue in memory
+- [x] Implement 30-second polling loop that fetches only new transactions since last check (`created` filter)
+- [x] Update cached revenue total incrementally from new transactions
+- [x] Handle Stripe API errors gracefully (log error, keep last known value)
+- [x] Expose cached revenue via `GET /api/stats`
 
 ## Phase 4: Overlay Frontend — Structure & Logic
 

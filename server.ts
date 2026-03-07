@@ -1,10 +1,13 @@
 import { resolve, normalize, join } from "path";
+import Stripe from "stripe";
 
 // --- Constants & Types ---
 
 const PORT = 4455;
 const DATA_FILE = "./data.json";
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
+const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY;
+const STRIPE_POLL_INTERVAL = 30_000;
 const VALID_DISPLAY_MODES = ["both", "rotate", "revenue", "costs", "counter"] as const;
 
 type DisplayMode = (typeof VALID_DISPLAY_MODES)[number];
@@ -26,7 +29,9 @@ const DEFAULT_DATA: AppData = {
 };
 
 let data: AppData;
-let currentRevenue = 0; // placeholder for Phase 3 (Stripe)
+let currentRevenue = 0; // cents (integer) — converted to dollars at API boundary
+let lastFetchTimestamp = 0; // Unix seconds, tracks latest transaction seen
+const stripe = STRIPE_SECRET_KEY ? new Stripe(STRIPE_SECRET_KEY) : null;
 
 // --- Data Helpers ---
 
@@ -141,12 +146,66 @@ function validateConfig(
   return { value: result };
 }
 
+// --- Stripe Integration ---
+
+async function fetchAllTimeRevenue(): Promise<void> {
+  if (!stripe) return;
+
+  let total = 0;
+  let latestCreated = 0;
+
+  for (const type of ["charge", "refund"] as const) {
+    for await (const txn of stripe.balanceTransactions.list({ type, limit: 100 })) {
+      total += txn.amount;
+      if (txn.created > latestCreated) latestCreated = txn.created;
+    }
+  }
+
+  currentRevenue = total;
+  lastFetchTimestamp = latestCreated;
+  console.log(`Stripe: initial revenue = $${(currentRevenue / 100).toFixed(2)}`);
+}
+
+async function pollNewTransactions(): Promise<void> {
+  if (!stripe) return;
+
+  try {
+    let latestCreated = lastFetchTimestamp;
+
+    for (const type of ["charge", "refund"] as const) {
+      for await (const txn of stripe.balanceTransactions.list({
+        type,
+        limit: 100,
+        created: { gt: lastFetchTimestamp },
+      })) {
+        currentRevenue += txn.amount;
+        if (txn.created > latestCreated) latestCreated = txn.created;
+      }
+    }
+
+    lastFetchTimestamp = latestCreated;
+  } catch (err) {
+    console.error("Stripe poll error:", err);
+  }
+}
+
 // --- Server ---
 
 data = await loadData();
 
 if (!ADMIN_PASSWORD) {
   console.warn("WARNING: ADMIN_PASSWORD is not set. POST /api/config will reject all requests.");
+}
+
+if (!stripe) {
+  console.warn("WARNING: STRIPE_SECRET_KEY is not set. Revenue will remain at 0.");
+} else {
+  try {
+    await fetchAllTimeRevenue();
+  } catch (err) {
+    console.error("Stripe initial fetch failed:", err);
+  }
+  setInterval(pollNewTransactions, STRIPE_POLL_INTERVAL);
 }
 
 const server = Bun.serve({
@@ -170,7 +229,7 @@ const server = Bun.serve({
     // GET /api/stats
     if (req.method === "GET" && path === "/api/stats") {
       return jsonResponse({
-        revenue: currentRevenue,
+        revenue: currentRevenue / 100,
         revenueGoal: data.revenueGoal,
         costTotal: data.costTotal,
         costBudgetCap: data.costBudgetCap,
