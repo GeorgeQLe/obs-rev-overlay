@@ -2,12 +2,12 @@
 
 ## Phase 1: Project Scaffolding
 
-- [ ] Initialize Bun project (`bun init`, configure `package.json`)
-- [ ] Install dependencies (`stripe`)
-- [ ] Create project directory structure (`public/`, `tasks/`)
-- [ ] Create `.env.example` with placeholder values for `STRIPE_SECRET_KEY` and `ADMIN_PASSWORD`
-- [ ] Add `.gitignore` (ignore `.env`, `node_modules/`, `data.json`)
-- [ ] Create `data.json` with default values (costTotal: 0, costBudgetCap: 50000, displayMode: "both", rotationInterval: 10, revenueGoal: 1000000)
+- [x] Initialize Bun project (`bun init`, configure `package.json`)
+- [x] Install dependencies (`stripe`)
+- [x] Create project directory structure (`public/`, `tasks/`)
+- [x] Create `.env.example` with placeholder values for `STRIPE_SECRET_KEY` and `ADMIN_PASSWORD`
+- [x] Add `.gitignore` (ignore `.env`, `node_modules/`, `data.json`)
+- [x] Create `data.json` with default values (costTotal: 0, costBudgetCap: 50000, displayMode: "both", rotationInterval: 10, revenueGoal: 1000000)
 
 ## Phase 2: Server & API
 

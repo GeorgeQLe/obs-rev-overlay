@@ -1,0 +1,14 @@
+{
+  "name": "obs-rev-overlay",
+  "module": "index.ts",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "stripe": "^20.4.1"
+  }
+}
