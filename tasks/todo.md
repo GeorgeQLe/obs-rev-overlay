@@ -33,45 +33,45 @@
 
 ## Phase 4: Overlay Frontend — Structure & Logic
 
-- [ ] Create `public/overlay.html` — minimal HTML shell with bar containers
-- [ ] Create `public/overlay.js` — poll `/api/stats` every 2-3 seconds for responsive updates
-- [ ] Implement currency formatting helper (e.g., `$45,230`)
-- [ ] Implement progress bar percentage calculation (current / goal * 100, capped at 100%)
-- [ ] Implement "both" display mode — both bars stacked vertically
-- [ ] Implement "rotate" display mode — fade between bars on a timer (configurable interval)
-- [ ] Implement "revenue" display mode — revenue bar only
-- [ ] Implement "costs" display mode — cost bar only
-- [ ] Implement "counter" display mode — text-only, no bar visualization
-- [ ] Handle display mode changes from API without page reload
+- [x] Create `public/overlay.html` — minimal HTML shell with bar containers
+- [x] Create `public/overlay.js` — poll `/api/stats` every 2.5 seconds for responsive updates
+- [x] Implement currency formatting helper (e.g., `$45,230`)
+- [x] Implement progress bar percentage calculation (current / goal * 100, capped at 100%)
+- [x] Implement "both" display mode — both bars stacked vertically
+- [x] Implement "rotate" display mode — fade between bars on a timer (configurable interval)
+- [x] Implement "revenue" display mode — revenue bar only
+- [x] Implement "costs" display mode — cost bar only
+- [x] Implement "counter" display mode — text-only, no bar visualization
+- [x] Handle display mode changes from API without page reload
 
 ## Phase 5: Overlay Frontend — Cyberpunk Theme
 
-- [ ] Create `public/overlay.css` — base layout with transparent background
-- [ ] Import Orbitron font from Google Fonts (with monospace fallback)
-- [ ] Style revenue bar — neon cyan (`#00fff2`) fill with `box-shadow` glow
-- [ ] Style cost bar — neon magenta (`#ff0055`) fill with `box-shadow` glow
-- [ ] Style text labels and amounts — white with color-matched `text-shadow` glow
-- [ ] Style bar track (unfilled portion) — dark semi-transparent background
-- [ ] Add scanline effect — CSS `::after` pseudo-element with `repeating-linear-gradient`
-- [ ] Add smooth bar fill transition (CSS `transition: width 0.8s ease-out`)
-- [ ] Add pulse/flash animation on amount text change
-- [ ] Add fade transition for rotate mode (CSS `opacity` transition, 0.5s)
-- [ ] Set overlay dimensions (~400-500px wide, auto height)
+- [x] Create `public/overlay.css` — base layout with transparent background
+- [x] Import Orbitron font from Google Fonts (with monospace fallback)
+- [x] Style revenue bar — neon cyan (`#00fff2`) fill with `box-shadow` glow
+- [x] Style cost bar — neon magenta (`#ff0055`) fill with `box-shadow` glow
+- [x] Style text labels and amounts — white with color-matched `text-shadow` glow
+- [x] Style bar track (unfilled portion) — dark semi-transparent background
+- [x] Add scanline effect — CSS `::after` pseudo-element with `repeating-linear-gradient`
+- [x] Add smooth bar fill transition (CSS `transition: width 0.8s ease-out`)
+- [x] Add pulse/flash animation on amount text change
+- [x] Add fade transition for rotate mode (CSS `opacity` transition, 0.5s)
+- [x] Set overlay dimensions (~450px wide, auto height)
 
 ## Phase 6: Admin Page
 
-- [ ] Create `public/admin.html` — password prompt and config form
-- [ ] Create `public/admin.css` — clean dark UI styling
-- [ ] Create `public/admin.js` — form logic and API calls
-- [ ] Implement password prompt on page load (store in session memory)
-- [ ] Add cost total number input
-- [ ] Add budget cap number input
-- [ ] Add display mode dropdown (both / rotate / revenue / costs / counter)
-- [ ] Add rotation interval input (conditionally shown when mode is "rotate")
-- [ ] Add read-only current revenue display (polled from `/api/stats`)
-- [ ] Implement save button — POST to `/api/config` with password and form values
-- [ ] Show success/error feedback on save
-- [ ] Handle incorrect password response
+- [x] Create `public/admin.html` — password prompt and config form
+- [x] Create `public/admin.css` — clean dark UI styling
+- [x] Create `public/admin.js` — form logic and API calls
+- [x] Implement password prompt on page load (store in session memory)
+- [x] Add cost total number input
+- [x] Add budget cap number input
+- [x] Add display mode dropdown (both / rotate / revenue / costs / counter)
+- [x] Add rotation interval input (conditionally shown when mode is "rotate")
+- [x] Add read-only current revenue display (polled from `/api/stats` every 5s)
+- [x] Implement save button — POST to `/api/config` with password and form values
+- [x] Show success/error feedback on save
+- [x] Handle incorrect password response (re-show auth screen)
 
 ## Phase 7: Testing & Polish
 
