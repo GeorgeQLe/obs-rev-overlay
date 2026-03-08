@@ -50,6 +50,7 @@
 - **No Laziness**: Find root causes. No temporary fixes. Senior developer standards.
 - **Minimal Impact**: Changes should only touch what's necessary. Avoid introducing bugs.
 
-## Project Status
-
-Feature-complete (Phases 1-9). See `tasks/history.md` for completed work, `tasks/todo.md` for deferred items and future ideas.
+## Task Tracking
+- Plans and progress in `tasks/todo.md`
+- Completed work history in `tasks/history.md`
+- Lessons learned in `tasks/lessons.md`
