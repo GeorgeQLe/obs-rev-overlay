@@ -52,16 +52,4 @@
 
 ## Project Status
 
-All phases complete (1-9). Fully functional with Stripe polling, 5 display modes, cyberpunk theme, admin panel with live preview, health monitoring, and auto-refresh on save.
-
-### Deferred Items
-- Stripe test mode verification (requires live/test key)
-- OBS Browser Source integration test (requires OBS)
-
-## Up Next
-
-Project is feature-complete per spec. No further phases planned. To extend, consider:
-- Animated number counters (count-up effect on revenue changes)
-- Sound alerts on milestone thresholds
-- Export/import config
-- Multiple overlay themes
+Feature-complete (Phases 1-9). See `tasks/history.md` for completed work, `tasks/todo.md` for deferred items and future ideas.
