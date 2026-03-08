@@ -90,6 +90,12 @@
 
 ## Review
 
-Phase 7 complete. Two bugs fixed:
+All phases complete. Project is functional and verified.
+
+### Phase 7 Bug Fixes
 1. `calcPercent(0, 0)` no longer returns NaN — guarded with `!goal ? 0`
 2. Rotate mode container no longer collapses (min-height) and position/opacity reset properly when switching away
+
+### Deferred Items
+- Stripe test mode verification (requires live/test key)
+- OBS Browser Source integration test (requires OBS)
