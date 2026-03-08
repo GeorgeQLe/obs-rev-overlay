@@ -15,6 +15,9 @@
   const saveBtn = $("save-btn");
   const feedback = $("feedback");
   const syncStatus = $("sync-status");
+  const previewToggle = $("preview-toggle");
+  const previewContainer = $("preview-container");
+  const previewFrame = $("preview-frame");
 
   let password = "";
   let pollTimer = null;
@@ -156,5 +159,10 @@
       e.preventDefault();
       save();
     }
+  });
+  previewToggle.addEventListener("click", () => {
+    const hidden = previewContainer.classList.toggle("hidden");
+    previewToggle.textContent = hidden ? "Show Preview" : "Hide Preview";
+    if (!hidden) previewFrame.src = previewFrame.src;
   });
 })();
