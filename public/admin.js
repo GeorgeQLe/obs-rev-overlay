@@ -139,6 +139,9 @@
       const data = await res.json();
       if (data.ok) {
         showFeedback("Saved", "success");
+        if (!previewContainer.classList.contains("hidden")) {
+          previewFrame.src = previewFrame.src;
+        }
       } else {
         showFeedback(data.error || "Save failed", "error");
       }
