@@ -88,6 +88,18 @@
 - [ ] Test with Stripe test mode API key — deferred (requires real key)
 - [ ] Test in OBS as a Browser Source — deferred (requires OBS)
 
+## Phase 8: Stripe Health Monitoring & Admin Polish
+
+- [x] Add sync health tracking vars to server (lastSyncTime, lastSyncError, consecutiveFailures)
+- [x] Update fetchAllTimeRevenue() to record sync success
+- [x] Update pollNewTransactions() to record sync success/failure with escalating warnings
+- [x] Record initial fetch failure in sync state
+- [x] Add `GET /api/health` endpoint
+- [x] Extend `GET /api/stats` with lastSyncTime
+- [x] Add sync status display in admin panel (green/yellow/red)
+- [x] Add save button loading state (disabled + "Saving..." during POST)
+- [x] Add Ctrl+Enter keyboard shortcut to save
+
 ## Review
 
 All phases complete. Project is functional and verified.
