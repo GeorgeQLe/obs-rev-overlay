@@ -52,41 +52,16 @@
 
 ## Project Status
 
-Phase 9 in progress (Steps 1-3 complete). Phases 1-8 fully functional with Stripe polling, 5 display modes, cyberpunk theme, admin panel, and health monitoring.
+All phases complete (1-9). Fully functional with Stripe polling, 5 display modes, cyberpunk theme, admin panel with live preview, health monitoring, and auto-refresh on save.
+
+### Deferred Items
+- Stripe test mode verification (requires live/test key)
+- OBS Browser Source integration test (requires OBS)
 
 ## Up Next
 
-### Phase 9, Step 4: Auto-refresh Preview on Save (`public/admin.js`)
-
-**Context:** Steps 1-3 added the full preview UI — HTML, CSS, and toggle logic. The preview iframe loads `/overlay` and can be shown/hidden via the "Show Preview" / "Hide Preview" button. Currently, when the user saves config changes (cost, display mode, etc.), the overlay updates via its own polling, but the preview iframe doesn't immediately reflect the change. This step makes the preview auto-refresh after a successful save so the user gets instant visual feedback.
-
-**File:** `public/admin.js` — one change needed in the `save()` function.
-
-**What to change:** Inside the `save()` function, after the `showFeedback("Saved", "success")` line (currently line 141), add a preview iframe reload:
-
-```js
-      if (data.ok) {
-        showFeedback("Saved", "success");
-        if (!previewContainer.classList.contains("hidden")) {
-          previewFrame.src = previewFrame.src;
-        }
-      }
-```
-
-**How it works:**
-- After a successful save (`data.ok`), check if the preview container is currently visible (doesn't have `hidden` class)
-- If visible, force-reload the iframe by reassigning its `src` — same technique used in the toggle handler
-- If preview is hidden, do nothing — it will reload next time the user opens it (the toggle handler already does this)
-- The overlay's own 2.5s poll will pick up the new config, so the iframe reload just speeds up the visual feedback
-
-**Why this is the right approach:**
-- Minimal code (2 lines added)
-- Reuses the `previewFrame` and `previewContainer` refs already added in Step 3
-- No race condition risk — the server has already persisted the config by the time `data.ok` is true
-- The iframe reload triggers a fresh `/overlay` page load which fetches `/api/stats` immediately
-
-**Acceptance criteria:**
-1. Save config with preview open → iframe visibly reloads within ~1 second
-2. Save config with preview closed → no reload, no errors
-3. Change display mode, save → preview shows updated mode after reload
-4. No console errors
+Project is feature-complete per spec. No further phases planned. To extend, consider:
+- Animated number counters (count-up effect on revenue changes)
+- Sound alerts on milestone thresholds
+- Export/import config
+- Multiple overlay themes

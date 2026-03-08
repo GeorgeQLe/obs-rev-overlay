@@ -117,4 +117,4 @@ All phases complete. Project is functional and verified.
 - [x] Step 1: Add preview iframe to admin HTML
 - [x] Step 2: Style the preview section
 - [x] Step 3: Toggle logic in admin.js
-- [ ] Step 4: Auto-refresh preview on save
+- [x] Step 4: Auto-refresh preview on save
