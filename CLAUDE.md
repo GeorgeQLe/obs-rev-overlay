@@ -49,3 +49,87 @@
 - **Simplicity First**: Make every change as simple as possible. Impact minimal code.
 - **No Laziness**: Find root causes. No temporary fixes. Senior developer standards.
 - **Minimal Impact**: Changes should only touch what's necessary. Avoid introducing bugs.
+
+## Project Status
+
+All 8 phases complete. Overlay is fully functional with Stripe polling, 5 display modes, cyberpunk theme, admin panel, and health monitoring.
+
+## Up Next
+
+### Phase 9: Live Overlay Preview in Admin Panel
+
+**Why:** Currently the admin panel is a blind config editor — you change settings and hope the overlay looks right. A live preview lets streamers see exactly what their overlay will look like while configuring, without switching to OBS.
+
+---
+
+#### Step 1: Add preview iframe to admin HTML (`public/admin.html`)
+
+Add a collapsible preview section below the save button:
+
+```html
+<div class="preview-section">
+  <button type="button" id="preview-toggle">Show Preview</button>
+  <div id="preview-container" class="hidden">
+    <iframe id="preview-frame" src="/overlay" frameborder="0"></iframe>
+  </div>
+</div>
+```
+
+Place this after `<div id="feedback"></div>` (line 56). The iframe loads `/overlay` which already exists and polls `/api/stats` on its own — no extra wiring needed.
+
+#### Step 2: Style the preview (`public/admin.css`)
+
+Add styles for the preview section:
+- `.preview-section` — margin-top: 24px
+- `#preview-toggle` — full-width button, secondary style (outline/ghost variant, not the cyan fill used by Save)
+- `#preview-container` — dark background (#0a0a1a) to simulate OBS transparent-on-dark, border-radius, overflow hidden, padding
+- `#preview-frame` — width: 100%, height: 200px (enough for both bars), no border, background transparent
+
+Key detail: the overlay has a transparent background. The dark preview container simulates how it looks in OBS on a dark scene. ~15 lines CSS.
+
+#### Step 3: Toggle logic (`public/admin.js`)
+
+Add click handler for `#preview-toggle`:
+- Toggle `#preview-container` visibility (add/remove `hidden` class)
+- Update button text: "Show Preview" ↔ "Hide Preview"
+- On show: reload the iframe (`preview-frame.src = preview-frame.src`) to ensure fresh state
+
+~8 lines JS. Add element refs alongside existing `$()` calls at the top of the IIFE.
+
+#### Step 4: Auto-refresh preview on save (`public/admin.js`)
+
+In the existing `save()` function, after a successful save (`data.ok`), reload the preview iframe if it's visible:
+
+```js
+if (data.ok) {
+  showFeedback("Saved", "success");
+  if (!previewContainer.classList.contains("hidden")) {
+    previewFrame.contentWindow.location.reload();
+  }
+}
+```
+
+This ensures mode/goal changes are immediately reflected. ~3 lines added to existing function.
+
+---
+
+#### Files Modified
+
+| File | Change |
+|------|--------|
+| `public/admin.html` | Add preview section HTML (~6 lines) |
+| `public/admin.css` | Add preview styles (~15 lines) |
+| `public/admin.js` | Add toggle handler, auto-refresh on save (~12 lines) |
+| `tasks/todo.md` | Add Phase 9 items |
+
+No server changes needed — the overlay page already works standalone.
+
+#### Acceptance Criteria
+
+1. Admin panel shows "Show Preview" button below feedback area
+2. Clicking it reveals the overlay in a dark container (simulating OBS)
+3. Button text toggles to "Hide Preview"
+4. Preview shows live data (revenue, costs, bars) — it's a real overlay instance
+5. Changing display mode + save → preview updates to reflect new mode
+6. Preview container has dark background so transparent overlay is visible
+7. No regressions to overlay or existing admin functionality
