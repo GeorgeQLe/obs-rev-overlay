@@ -8,7 +8,7 @@
     }).format(n);
 
   const calcPercent = (current, goal) =>
-    Math.min(100, Math.max(0, (current / goal) * 100));
+    !goal ? 0 : Math.min(100, Math.max(0, (current / goal) * 100));
 
   const overlay = document.getElementById("overlay");
   const revBar = document.getElementById("revenue-bar");

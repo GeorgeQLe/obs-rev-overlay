@@ -161,3 +161,14 @@ body {
 }
 
 #overlay[data-mode="rotate"] #counter-display { display: none; }
+
+/* Rotate mode: prevent container collapse from absolute positioning */
+#overlay[data-mode="rotate"] {
+  min-height: 80px;
+}
+
+/* Defensive reset when leaving rotate mode */
+#overlay:not([data-mode="rotate"]) .bar-container {
+  position: static;
+  opacity: 1;
+}

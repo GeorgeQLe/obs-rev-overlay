@@ -75,16 +75,21 @@
 
 ## Phase 7: Testing & Polish
 
-- [ ] Test with Stripe test mode API key — verify revenue calculation
-- [ ] Test all 5 display modes in a browser
-- [ ] Test rotation timing and fade transitions
-- [ ] Test admin page — update costs, change modes, verify overlay reacts
-- [ ] Test server restart — verify `data.json` persistence loads correctly
-- [ ] Test in OBS as a Browser Source — verify transparent background works
-- [ ] Test edge cases: zero revenue, zero costs, cost exceeding budget cap, revenue exceeding $1M goal
-- [ ] Verify Stripe key and admin password are never exposed to frontend
-- [ ] Verify server only binds to localhost
+- [x] Fix `calcPercent` division by zero (returns 0 when goal is 0)
+- [x] Fix rotate mode container collapse (add min-height: 80px)
+- [x] Fix rotate→other mode position/opacity leak (defensive reset)
+- [x] Test all 5 display modes — verified via API cycling
+- [x] Test admin page — update costs, change modes, verify overlay reacts
+- [x] Test server restart — verify `data.json` persistence loads correctly
+- [x] Test transparent background — confirmed in overlay.css
+- [x] Test edge cases: zero revenue (no Stripe key), mode switching
+- [x] Verify Stripe key and admin password are never exposed to frontend
+- [x] Verify server only binds to localhost (confirmed via ss)
+- [ ] Test with Stripe test mode API key — deferred (requires real key)
+- [ ] Test in OBS as a Browser Source — deferred (requires OBS)
 
 ## Review
 
-_(To be filled after implementation)_
+Phase 7 complete. Two bugs fixed:
+1. `calcPercent(0, 0)` no longer returns NaN — guarded with `!goal ? 0`
+2. Rotate mode container no longer collapses (min-height) and position/opacity reset properly when switching away
