@@ -4,14 +4,64 @@ html, body {
   background: transparent;
 }
 
-body {
-  font-family: 'Orbitron', monospace;
-}
+/* --- Theme definitions via CSS custom properties --- */
 
 #overlay {
+  --color-primary: #00fff2;
+  --color-secondary: #ff0055;
+  --color-primary-rgb: 0, 255, 242;
+  --color-secondary-rgb: 255, 0, 85;
+  --font-main: 'Orbitron', monospace;
+  --scanline-opacity: 0.08;
+
   width: 450px;
   position: relative;
   padding: 12px;
+}
+
+body {
+  font-family: var(--font-main);
+}
+
+#overlay[data-theme="cyberpunk"] {
+  --color-primary: #00fff2;
+  --color-secondary: #ff0055;
+  --color-primary-rgb: 0, 255, 242;
+  --color-secondary-rgb: 255, 0, 85;
+  --font-main: 'Orbitron', monospace;
+  --scanline-opacity: 0.08;
+}
+
+#overlay[data-theme="minimal"] {
+  --color-primary: #4caf50;
+  --color-secondary: #f44336;
+  --color-primary-rgb: 76, 175, 80;
+  --color-secondary-rgb: 244, 67, 54;
+  --font-main: system-ui, -apple-system, sans-serif;
+  --scanline-opacity: 0;
+}
+
+#overlay[data-theme="retro"] {
+  --color-primary: #ffeb3b;
+  --color-secondary: #ff9800;
+  --color-primary-rgb: 255, 235, 59;
+  --color-secondary-rgb: 255, 152, 0;
+  --font-main: 'Press Start 2P', monospace;
+  --scanline-opacity: 0.15;
+}
+
+/* Retro font renders smaller — bump sizes */
+#overlay[data-theme="retro"] .bar-label {
+  font-size: 8px;
+  letter-spacing: 2px;
+}
+
+#overlay[data-theme="retro"] .bar-amounts {
+  font-size: 9px;
+}
+
+#overlay[data-theme="retro"] .counter-line {
+  font-size: 14px;
 }
 
 #overlay::after {
@@ -23,8 +73,8 @@ body {
     0deg,
     transparent,
     transparent 2px,
-    rgba(0, 0, 0, 0.08) 2px,
-    rgba(0, 0, 0, 0.08) 4px
+    rgba(0, 0, 0, var(--scanline-opacity)) 2px,
+    rgba(0, 0, 0, var(--scanline-opacity)) 4px
   );
 }
 
@@ -44,11 +94,11 @@ body {
 }
 
 #revenue-bar .bar-label {
-  text-shadow: 0 0 8px #00fff2;
+  text-shadow: 0 0 8px var(--color-primary);
 }
 
 #cost-bar .bar-label {
-  text-shadow: 0 0 8px #ff0055;
+  text-shadow: 0 0 8px var(--color-secondary);
 }
 
 .bar-track {
@@ -66,13 +116,13 @@ body {
 }
 
 #revenue-bar .bar-fill {
-  background: #00fff2;
-  box-shadow: 0 0 12px #00fff2, 0 0 4px #00fff2 inset;
+  background: var(--color-primary);
+  box-shadow: 0 0 12px var(--color-primary), 0 0 4px var(--color-primary) inset;
 }
 
 #cost-bar .bar-fill {
-  background: #ff0055;
-  box-shadow: 0 0 12px #ff0055, 0 0 4px #ff0055 inset;
+  background: var(--color-secondary);
+  box-shadow: 0 0 12px var(--color-secondary), 0 0 4px var(--color-secondary) inset;
 }
 
 .bar-amounts {
@@ -84,11 +134,11 @@ body {
 }
 
 #revenue-bar .bar-amounts {
-  text-shadow: 0 0 6px rgba(0, 255, 242, 0.5);
+  text-shadow: 0 0 6px rgba(var(--color-primary-rgb), 0.5);
 }
 
 #cost-bar .bar-amounts {
-  text-shadow: 0 0 6px rgba(255, 0, 85, 0.5);
+  text-shadow: 0 0 6px rgba(var(--color-secondary-rgb), 0.5);
 }
 
 /* --- Counter display --- */
@@ -105,13 +155,13 @@ body {
 }
 
 .counter-line.revenue-text {
-  color: #00fff2;
-  text-shadow: 0 0 14px #00fff2, 0 0 6px #00fff2;
+  color: var(--color-primary);
+  text-shadow: 0 0 14px var(--color-primary), 0 0 6px var(--color-primary);
 }
 
 .counter-line.cost-text {
-  color: #ff0055;
-  text-shadow: 0 0 14px #ff0055, 0 0 6px #ff0055;
+  color: var(--color-secondary);
+  text-shadow: 0 0 14px var(--color-secondary), 0 0 6px var(--color-secondary);
 }
 
 /* --- Pulse animation --- */
