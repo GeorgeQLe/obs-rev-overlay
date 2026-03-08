@@ -111,3 +111,10 @@ All phases complete. Project is functional and verified.
 ### Deferred Items
 - Stripe test mode verification (requires live/test key)
 - OBS Browser Source integration test (requires OBS)
+
+## Phase 9: Live Overlay Preview in Admin Panel
+
+- [x] Step 1: Add preview iframe to admin HTML
+- [ ] Step 2: Style the preview section
+- [ ] Step 3: Toggle logic in admin.js
+- [ ] Step 4: Auto-refresh preview on save
