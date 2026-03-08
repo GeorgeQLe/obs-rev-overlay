@@ -14,6 +14,7 @@
   const rotationInterval = $("rotation-interval");
   const saveBtn = $("save-btn");
   const feedback = $("feedback");
+  const syncStatus = $("sync-status");
 
   let password = "";
   let pollTimer = null;
@@ -44,6 +45,18 @@
     toggleRotationField();
   }
 
+  function updateSyncStatus(stats) {
+    if (!stats.lastSyncTime) {
+      syncStatus.textContent = "Stripe not configured";
+      syncStatus.className = "sync-status stale";
+      return;
+    }
+    const agoSec = Math.round((Date.now() - stats.lastSyncTime) / 1000);
+    const label = agoSec < 60 ? `${agoSec}s ago` : `${Math.round(agoSec / 60)}m ago`;
+    syncStatus.textContent = `Last sync: ${label}`;
+    syncStatus.className = "sync-status " + (agoSec <= 60 ? "healthy" : "stale");
+  }
+
   function toggleRotationField() {
     rotationField.classList.toggle("hidden", displayMode.value !== "rotate");
   }
@@ -69,16 +82,24 @@
     }
 
     populateForm(stats);
+    updateSyncStatus(stats);
     authScreen.classList.add("hidden");
     adminPanel.classList.remove("hidden");
 
     pollTimer = setInterval(async () => {
       const s = await fetchStats();
-      if (s) revenueDisplay.value = formatCurrency(s.revenue);
+      if (s) {
+        revenueDisplay.value = formatCurrency(s.revenue);
+        updateSyncStatus(s);
+      }
     }, 5000);
   }
 
   async function save() {
+    if (saveBtn.disabled) return;
+    saveBtn.disabled = true;
+    saveBtn.textContent = "Saving...";
+
     const payload = { password };
 
     const ct = parseFloat(costTotal.value);
@@ -120,6 +141,9 @@
       }
     } catch (e) {
       showFeedback("Network error", "error");
+    } finally {
+      saveBtn.disabled = false;
+      saveBtn.textContent = "Save";
     }
   }
 
@@ -127,4 +151,10 @@
   passwordInput.addEventListener("keydown", (e) => { if (e.key === "Enter") unlock(); });
   displayMode.addEventListener("change", toggleRotationField);
   saveBtn.addEventListener("click", save);
+  document.addEventListener("keydown", (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key === "Enter" && !adminPanel.classList.contains("hidden")) {
+      e.preventDefault();
+      save();
+    }
+  });
 })();

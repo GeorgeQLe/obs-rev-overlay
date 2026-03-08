@@ -31,6 +31,9 @@ const DEFAULT_DATA: AppData = {
 let data: AppData;
 let currentRevenue = 0; // cents (integer) — converted to dollars at API boundary
 let lastFetchTimestamp = 0; // Unix seconds, tracks latest transaction seen
+let lastSyncTime = 0; // Unix ms of last successful Stripe poll
+let lastSyncError: string | null = null;
+let consecutiveFailures = 0;
 const stripe = STRIPE_SECRET_KEY ? new Stripe(STRIPE_SECRET_KEY) : null;
 
 // --- Data Helpers ---
@@ -163,6 +166,9 @@ async function fetchAllTimeRevenue(): Promise<void> {
 
   currentRevenue = total;
   lastFetchTimestamp = latestCreated;
+  lastSyncTime = Date.now();
+  lastSyncError = null;
+  consecutiveFailures = 0;
   console.log(`Stripe: initial revenue = $${(currentRevenue / 100).toFixed(2)}`);
 }
 
@@ -184,8 +190,17 @@ async function pollNewTransactions(): Promise<void> {
     }
 
     lastFetchTimestamp = latestCreated;
+    lastSyncTime = Date.now();
+    lastSyncError = null;
+    consecutiveFailures = 0;
   } catch (err) {
-    console.error("Stripe poll error:", err);
+    consecutiveFailures++;
+    lastSyncError = err instanceof Error ? err.message : String(err);
+    if (consecutiveFailures >= 3) {
+      console.error(`Stripe poll: ${consecutiveFailures} consecutive failures — ${lastSyncError}`);
+    } else {
+      console.error("Stripe poll error:", err);
+    }
   }
 }
 
@@ -203,6 +218,8 @@ if (!stripe) {
   try {
     await fetchAllTimeRevenue();
   } catch (err) {
+    consecutiveFailures++;
+    lastSyncError = err instanceof Error ? err.message : String(err);
     console.error("Stripe initial fetch failed:", err);
   }
   setInterval(pollNewTransactions, STRIPE_POLL_INTERVAL);
@@ -235,6 +252,17 @@ const server = Bun.serve({
         costBudgetCap: data.costBudgetCap,
         displayMode: data.displayMode,
         rotationInterval: data.rotationInterval,
+        lastSyncTime,
+      });
+    }
+
+    // GET /api/health
+    if (req.method === "GET" && path === "/api/health") {
+      return jsonResponse({
+        stripeConnected: !!stripe,
+        lastSyncTime,
+        lastSyncError,
+        consecutiveFailures,
       });
     }
 

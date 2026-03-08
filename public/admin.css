@@ -110,6 +110,22 @@ button:active {
   color: #ff4c6a;
 }
 
+.sync-status {
+  display: block;
+  margin-top: 4px;
+  font-size: 11px;
+  letter-spacing: 0.3px;
+}
+
+.sync-status.healthy { color: #4cff88; }
+.sync-status.stale { color: #ffd740; }
+.sync-status.error { color: #ff4c6a; }
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .hidden {
   display: none;
 }
