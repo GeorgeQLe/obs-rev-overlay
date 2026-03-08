@@ -1,11 +1,11 @@
 (function () {
-  const formatCurrency = (n) =>
-    new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(n);
+  const currencyFmt = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  });
+  const formatCurrency = (n) => currencyFmt.format(n);
 
   const calcPercent = (current, goal) =>
     !goal ? 0 : Math.min(100, Math.max(0, (current / goal) * 100));
@@ -76,11 +76,11 @@
       }
     }
 
-    // Phase 12: Apply theme
-    overlay.setAttribute("data-theme", stats.theme || "cyberpunk");
-    document.body.style.fontFamily = getComputedStyle(overlay).getPropertyValue("--font-main");
+    const theme = stats.theme || "cyberpunk";
+    if (!prevStats || prevStats.theme !== theme) {
+      overlay.setAttribute("data-theme", theme);
+    }
 
-    // Phase 13: Check milestones
     checkMilestones(stats);
 
     applyDisplayMode(stats.displayMode, stats.rotationInterval);
@@ -114,25 +114,26 @@
     }
   }
 
+  let audioCtx = null;
+
   function playMilestoneSound() {
     try {
-      const ctx = new (window.AudioContext || window.webkitAudioContext)();
-      const now = ctx.currentTime;
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      const now = audioCtx.currentTime;
 
-      // Rising two-tone chime
       [440, 660].forEach((freq, i) => {
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
         osc.type = "sine";
         osc.frequency.value = freq;
         gain.gain.setValueAtTime(0.3, now + i * 0.2);
         gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.2 + 0.3);
-        osc.connect(gain).connect(ctx.destination);
+        osc.connect(gain).connect(audioCtx.destination);
         osc.start(now + i * 0.2);
         osc.stop(now + i * 0.2 + 0.3);
       });
-
-      setTimeout(() => ctx.close(), 1000);
     } catch (e) {
       console.error("Audio error:", e);
     }

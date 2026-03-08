@@ -136,14 +136,6 @@ button:disabled {
 
 #preview-toggle {
   width: 100%;
-  background: transparent;
-  border: 1px solid #2a2a4a;
-  color: #e0e0e0;
-}
-
-#preview-toggle:hover {
-  border-color: #00fff2;
-  color: #00fff2;
 }
 
 #preview-container {

@@ -23,15 +23,6 @@ body {
   font-family: var(--font-main);
 }
 
-#overlay[data-theme="cyberpunk"] {
-  --color-primary: #00fff2;
-  --color-secondary: #ff0055;
-  --color-primary-rgb: 0, 255, 242;
-  --color-secondary-rgb: 255, 0, 85;
-  --font-main: 'Orbitron', monospace;
-  --scanline-opacity: 0.08;
-}
-
 #overlay[data-theme="minimal"] {
   --color-primary: #4caf50;
   --color-secondary: #f44336;

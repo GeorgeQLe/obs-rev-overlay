@@ -328,9 +328,7 @@ const server = Bun.serve({
 
     // GET /api/config/export
     if (req.method === "GET" && path === "/api/config/export") {
-      const file = Bun.file(DATA_FILE);
-      const content = await file.text();
-      return new Response(content, {
+      return new Response(JSON.stringify(data, null, 2), {
         headers: {
           "Content-Type": "application/json",
           "Content-Disposition": 'attachment; filename="overlay-config.json"',
