@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Revenue Overlay</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/overlay.css">
+</head>
+<body>
+  <div id="overlay">
+    <div id="revenue-bar" class="bar-container">
+      <span class="bar-label">REVENUE</span>
+      <div class="bar-track"><div class="bar-fill"></div></div>
+      <div class="bar-amounts"><span class="bar-current"></span><span class="bar-goal"></span></div>
+    </div>
+    <div id="cost-bar" class="bar-container">
+      <span class="bar-label">COSTS</span>
+      <div class="bar-track"><div class="bar-fill"></div></div>
+      <div class="bar-amounts"><span class="bar-current"></span><span class="bar-goal"></span></div>
+    </div>
+    <div id="counter-display">
+      <div class="counter-line revenue-text"></div>
+      <div class="counter-line cost-text"></div>
+    </div>
+  </div>
+  <script defer src="/overlay.js"></script>
+</body>
+</html>
