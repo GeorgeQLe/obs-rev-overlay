@@ -52,64 +52,54 @@
 
 ## Project Status
 
-Phase 9 in progress (Step 1 complete). Phases 1-8 fully functional with Stripe polling, 5 display modes, cyberpunk theme, admin panel, and health monitoring.
+Phase 9 in progress (Steps 1-2 complete). Phases 1-8 fully functional with Stripe polling, 5 display modes, cyberpunk theme, admin panel, and health monitoring.
 
 ## Up Next
 
-### Phase 9, Step 2: Style the Preview Section (`public/admin.css`)
+### Phase 9, Step 3: Toggle Logic (`public/admin.js`)
 
-**Context:** Step 1 added the preview HTML to `public/admin.html` — a `.preview-section` div containing a `#preview-toggle` button and a `#preview-container` (hidden) with an `#preview-frame` iframe loading `/overlay`. The HTML is in place but unstyled.
+**Context:** Steps 1-2 added the preview HTML and CSS. The admin panel now has:
+- `#preview-toggle` button (text: "Show Preview") inside `.preview-section`
+- `#preview-container` div with class `hidden`, containing `#preview-frame` iframe pointing to `/overlay`
 
-**File:** `public/admin.css` — append ~15 lines at the end of the file (after `.hidden` on line 131).
+The button and container are styled but clicking the button does nothing yet. This step adds the toggle interaction.
 
-**What to add:**
+**File:** `public/admin.js` — two changes needed:
 
-```css
-.preview-section {
-  margin-top: 24px;
-}
+**Change 1: Add element references (after line 17, the `syncStatus` const)**
 
-#preview-toggle {
-  width: 100%;
-  background: transparent;
-  border: 1px solid #2a2a4a;
-  color: #e0e0e0;
-}
+Add these two refs alongside the existing `$()` calls at the top of the IIFE:
 
-#preview-toggle:hover {
-  border-color: #00fff2;
-  color: #00fff2;
-}
-
-#preview-container {
-  margin-top: 12px;
-  background: #0a0a1a;
-  border-radius: 8px;
-  overflow: hidden;
-  padding: 12px;
-}
-
-#preview-frame {
-  width: 100%;
-  height: 200px;
-  border: none;
-  background: transparent;
-}
+```js
+const previewToggle = $("preview-toggle");
+const previewContainer = $("preview-container");
+const previewFrame = $("preview-frame");
 ```
 
-**Key design decisions:**
-- `#preview-toggle` uses ghost/outline style (transparent bg, border) to differentiate from the solid cyan Save button
-- `#preview-container` uses `#0a0a1a` dark background to simulate how the transparent overlay looks in OBS on a dark scene
-- `#preview-frame` at 200px height is enough for both revenue + cost bars stacked
-- Hover state uses cyan (`#00fff2`) to match the project's cyberpunk theme
+**Change 2: Add click handler (after line 158, before the closing `})();`)**
+
+Add the toggle click handler alongside the other event listeners:
+
+```js
+previewToggle.addEventListener("click", () => {
+  const hidden = previewContainer.classList.toggle("hidden");
+  previewToggle.textContent = hidden ? "Show Preview" : "Hide Preview";
+  if (!hidden) previewFrame.src = previewFrame.src;
+});
+```
+
+**How it works:**
+- `classList.toggle("hidden")` returns `true` if class was added (now hidden), `false` if removed (now visible)
+- Button text updates to reflect current state
+- `previewFrame.src = previewFrame.src` forces iframe reload when opening, so the preview always shows current overlay state
+- No cleanup needed on close — iframe just stays in DOM with `display: none`
 
 **Acceptance criteria:**
-1. "Show Preview" button is full-width with outline style, visually distinct from Save
-2. Preview container (when shown via devtools removing `.hidden`) has dark background
-3. iframe fills the container width with no visible border
-4. No regressions to existing admin styles
+1. Click "Show Preview" → container appears, button text changes to "Hide Preview"
+2. Click "Hide Preview" → container hides, button text changes back to "Show Preview"
+3. Each time preview is shown, iframe reloads (visible as a brief flash/reload of overlay content)
+4. No console errors
 
 ### Remaining Phase 9 Steps
 
-- **Step 3:** Toggle logic in `public/admin.js` — click handler for `#preview-toggle` to show/hide container, update button text, reload iframe on show (~8 lines)
 - **Step 4:** Auto-refresh on save in `public/admin.js` — after successful save, reload preview iframe if visible (~3 lines added to `save()` function)
