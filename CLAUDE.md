@@ -52,54 +52,41 @@
 
 ## Project Status
 
-Phase 9 in progress (Steps 1-2 complete). Phases 1-8 fully functional with Stripe polling, 5 display modes, cyberpunk theme, admin panel, and health monitoring.
+Phase 9 in progress (Steps 1-3 complete). Phases 1-8 fully functional with Stripe polling, 5 display modes, cyberpunk theme, admin panel, and health monitoring.
 
 ## Up Next
 
-### Phase 9, Step 3: Toggle Logic (`public/admin.js`)
+### Phase 9, Step 4: Auto-refresh Preview on Save (`public/admin.js`)
 
-**Context:** Steps 1-2 added the preview HTML and CSS. The admin panel now has:
-- `#preview-toggle` button (text: "Show Preview") inside `.preview-section`
-- `#preview-container` div with class `hidden`, containing `#preview-frame` iframe pointing to `/overlay`
+**Context:** Steps 1-3 added the full preview UI — HTML, CSS, and toggle logic. The preview iframe loads `/overlay` and can be shown/hidden via the "Show Preview" / "Hide Preview" button. Currently, when the user saves config changes (cost, display mode, etc.), the overlay updates via its own polling, but the preview iframe doesn't immediately reflect the change. This step makes the preview auto-refresh after a successful save so the user gets instant visual feedback.
 
-The button and container are styled but clicking the button does nothing yet. This step adds the toggle interaction.
+**File:** `public/admin.js` — one change needed in the `save()` function.
 
-**File:** `public/admin.js` — two changes needed:
-
-**Change 1: Add element references (after line 17, the `syncStatus` const)**
-
-Add these two refs alongside the existing `$()` calls at the top of the IIFE:
+**What to change:** Inside the `save()` function, after the `showFeedback("Saved", "success")` line (currently line 141), add a preview iframe reload:
 
 ```js
-const previewToggle = $("preview-toggle");
-const previewContainer = $("preview-container");
-const previewFrame = $("preview-frame");
-```
-
-**Change 2: Add click handler (after line 158, before the closing `})();`)**
-
-Add the toggle click handler alongside the other event listeners:
-
-```js
-previewToggle.addEventListener("click", () => {
-  const hidden = previewContainer.classList.toggle("hidden");
-  previewToggle.textContent = hidden ? "Show Preview" : "Hide Preview";
-  if (!hidden) previewFrame.src = previewFrame.src;
-});
+      if (data.ok) {
+        showFeedback("Saved", "success");
+        if (!previewContainer.classList.contains("hidden")) {
+          previewFrame.src = previewFrame.src;
+        }
+      }
 ```
 
 **How it works:**
-- `classList.toggle("hidden")` returns `true` if class was added (now hidden), `false` if removed (now visible)
-- Button text updates to reflect current state
-- `previewFrame.src = previewFrame.src` forces iframe reload when opening, so the preview always shows current overlay state
-- No cleanup needed on close — iframe just stays in DOM with `display: none`
+- After a successful save (`data.ok`), check if the preview container is currently visible (doesn't have `hidden` class)
+- If visible, force-reload the iframe by reassigning its `src` — same technique used in the toggle handler
+- If preview is hidden, do nothing — it will reload next time the user opens it (the toggle handler already does this)
+- The overlay's own 2.5s poll will pick up the new config, so the iframe reload just speeds up the visual feedback
+
+**Why this is the right approach:**
+- Minimal code (2 lines added)
+- Reuses the `previewFrame` and `previewContainer` refs already added in Step 3
+- No race condition risk — the server has already persisted the config by the time `data.ok` is true
+- The iframe reload triggers a fresh `/overlay` page load which fetches `/api/stats` immediately
 
 **Acceptance criteria:**
-1. Click "Show Preview" → container appears, button text changes to "Hide Preview"
-2. Click "Hide Preview" → container hides, button text changes back to "Show Preview"
-3. Each time preview is shown, iframe reloads (visible as a brief flash/reload of overlay content)
+1. Save config with preview open → iframe visibly reloads within ~1 second
+2. Save config with preview closed → no reload, no errors
+3. Change display mode, save → preview shows updated mode after reload
 4. No console errors
-
-### Remaining Phase 9 Steps
-
-- **Step 4:** Auto-refresh on save in `public/admin.js` — after successful save, reload preview iframe if visible (~3 lines added to `save()` function)
