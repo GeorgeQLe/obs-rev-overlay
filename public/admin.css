@@ -1,0 +1,115 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: #1a1a2e;
+  color: #e0e0e0;
+  font-family: system-ui, -apple-system, sans-serif;
+  display: flex;
+  justify-content: center;
+  padding: 40px 16px;
+}
+
+h1 {
+  font-size: 20px;
+  margin-bottom: 24px;
+  color: #fff;
+}
+
+#auth-screen,
+#admin-panel {
+  width: 100%;
+  max-width: 400px;
+}
+
+#auth-screen {
+  text-align: center;
+  padding-top: 80px;
+}
+
+#auth-screen input {
+  display: block;
+  width: 100%;
+  margin-bottom: 12px;
+}
+
+input, select {
+  background: #16213e;
+  border: 1px solid #2a2a4a;
+  color: #e0e0e0;
+  padding: 10px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  width: 100%;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+input:focus, select:focus {
+  border-color: #00fff2;
+}
+
+input[readonly] {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.field {
+  margin-bottom: 16px;
+}
+
+.field label {
+  display: block;
+  font-size: 12px;
+  color: #888;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+button {
+  background: #00fff2;
+  color: #1a1a2e;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
+
+button:hover {
+  background: #00ddd2;
+}
+
+button:active {
+  transform: scale(0.97);
+}
+
+#save-btn {
+  width: 100%;
+  margin-top: 8px;
+}
+
+#feedback {
+  margin-top: 12px;
+  font-size: 13px;
+  text-align: center;
+  min-height: 20px;
+}
+
+#feedback.success {
+  color: #4cff88;
+}
+
+#feedback.error {
+  color: #ff4c6a;
+}
+
+.hidden {
+  display: none;
+}

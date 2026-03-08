@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Overlay Admin</title>
+  <link rel="stylesheet" href="/admin.css">
+</head>
+<body>
+  <div id="auth-screen">
+    <h1>Overlay Admin</h1>
+    <input type="password" id="password-input" placeholder="Admin password">
+    <button id="unlock-btn">Unlock</button>
+  </div>
+
+  <div id="admin-panel" class="hidden">
+    <h1>Overlay Admin</h1>
+
+    <div class="field">
+      <label>Revenue (read-only)</label>
+      <input type="text" id="revenue-display" readonly>
+    </div>
+
+    <div class="field">
+      <label for="revenue-goal">Revenue Goal ($)</label>
+      <input type="number" id="revenue-goal" min="1" step="1">
+    </div>
+
+    <div class="field">
+      <label for="cost-total">Cost Total ($)</label>
+      <input type="number" id="cost-total" min="0" step="0.01">
+    </div>
+
+    <div class="field">
+      <label for="cost-budget-cap">Budget Cap ($)</label>
+      <input type="number" id="cost-budget-cap" min="1" step="1">
+    </div>
+
+    <div class="field">
+      <label for="display-mode">Display Mode</label>
+      <select id="display-mode">
+        <option value="both">Both</option>
+        <option value="rotate">Rotate</option>
+        <option value="revenue">Revenue Only</option>
+        <option value="costs">Costs Only</option>
+        <option value="counter">Counter</option>
+      </select>
+    </div>
+
+    <div class="field hidden" id="rotation-field">
+      <label for="rotation-interval">Rotation Interval (seconds)</label>
+      <input type="number" id="rotation-interval" min="1" step="1">
+    </div>
+
+    <button id="save-btn">Save</button>
+    <div id="feedback"></div>
+  </div>
+
+  <script defer src="/admin.js"></script>
+</body>
+</html>
