@@ -160,3 +160,66 @@ button:disabled {
   border: none;
   background: transparent;
 }
+
+/* --- Config export/import --- */
+
+.config-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.ghost-btn {
+  background: transparent;
+  border: 1px solid #2a2a4a;
+  color: #e0e0e0;
+  flex: 1;
+}
+
+.ghost-btn:hover {
+  border-color: #00fff2;
+  color: #00fff2;
+}
+
+/* --- Milestone management --- */
+
+.milestone-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 10px;
+  background: #16213e;
+  border: 1px solid #2a2a4a;
+  border-radius: 6px;
+  margin-bottom: 6px;
+  font-size: 14px;
+}
+
+.milestone-remove {
+  background: transparent;
+  border: none;
+  color: #ff4c6a;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 0 4px;
+  line-height: 1;
+}
+
+.milestone-remove:hover {
+  color: #ff0055;
+}
+
+.milestone-add {
+  display: flex;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.milestone-add input {
+  flex: 1;
+}
+
+.milestone-add .ghost-btn {
+  flex: 0 0 auto;
+  padding: 10px 16px;
+}

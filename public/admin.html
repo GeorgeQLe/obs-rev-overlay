@@ -53,8 +53,32 @@
       <input type="number" id="rotation-interval" min="1" step="1">
     </div>
 
+    <div class="field">
+      <label for="theme">Theme</label>
+      <select id="theme">
+        <option value="cyberpunk">Cyberpunk</option>
+        <option value="minimal">Minimal</option>
+        <option value="retro">Retro Arcade</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>Milestones ($)</label>
+      <div id="milestone-list"></div>
+      <div class="milestone-add">
+        <input type="number" id="milestone-input" min="1" step="1" placeholder="Amount">
+        <button type="button" id="milestone-add-btn" class="ghost-btn">Add</button>
+      </div>
+    </div>
+
     <button id="save-btn">Save</button>
     <div id="feedback"></div>
+
+    <div class="config-actions">
+      <button type="button" id="export-btn" class="ghost-btn">Export Config</button>
+      <button type="button" id="import-btn" class="ghost-btn">Import Config</button>
+      <input type="file" id="import-file" accept=".json" class="hidden">
+    </div>
 
     <div class="preview-section">
       <button type="button" id="preview-toggle">Show Preview</button>

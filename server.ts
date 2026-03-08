@@ -9,8 +9,10 @@ const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
 const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY;
 const STRIPE_POLL_INTERVAL = 30_000;
 const VALID_DISPLAY_MODES = ["both", "rotate", "revenue", "costs", "counter"] as const;
+const VALID_THEMES = ["cyberpunk", "minimal", "retro"] as const;
 
 type DisplayMode = (typeof VALID_DISPLAY_MODES)[number];
+type Theme = (typeof VALID_THEMES)[number];
 
 interface AppData {
   costTotal: number;
@@ -18,6 +20,9 @@ interface AppData {
   displayMode: DisplayMode;
   rotationInterval: number;
   revenueGoal: number;
+  theme: Theme;
+  milestones: number[];
+  triggeredMilestones: number[];
 }
 
 const DEFAULT_DATA: AppData = {
@@ -26,6 +31,9 @@ const DEFAULT_DATA: AppData = {
   displayMode: "both",
   rotationInterval: 10,
   revenueGoal: 100,
+  theme: "cyberpunk",
+  milestones: [],
+  triggeredMilestones: [],
 };
 
 let data: AppData;
@@ -41,7 +49,8 @@ const stripe = STRIPE_SECRET_KEY ? new Stripe(STRIPE_SECRET_KEY) : null;
 async function loadData(): Promise<AppData> {
   const file = Bun.file(DATA_FILE);
   if (await file.exists()) {
-    return (await file.json()) as AppData;
+    const raw = await file.json();
+    return { ...DEFAULT_DATA, ...raw } as AppData;
   }
   await saveData(DEFAULT_DATA);
   return { ...DEFAULT_DATA };
@@ -144,6 +153,20 @@ function validateConfig(
       return { error: "revenueGoal must be a finite number > 0" };
     }
     result.revenueGoal = body.revenueGoal;
+  }
+
+  if ("theme" in body) {
+    if (!VALID_THEMES.includes(body.theme as Theme)) {
+      return { error: `theme must be one of: ${VALID_THEMES.join(", ")}` };
+    }
+    result.theme = body.theme as Theme;
+  }
+
+  if ("milestones" in body) {
+    if (!Array.isArray(body.milestones) || !body.milestones.every((m: unknown) => typeof m === "number" && isFinite(m as number) && (m as number) > 0)) {
+      return { error: "milestones must be an array of positive finite numbers" };
+    }
+    result.milestones = body.milestones as number[];
   }
 
   return { value: result };
@@ -252,6 +275,9 @@ const server = Bun.serve({
         costBudgetCap: data.costBudgetCap,
         displayMode: data.displayMode,
         rotationInterval: data.rotationInterval,
+        theme: data.theme,
+        milestones: data.milestones,
+        triggeredMilestones: data.triggeredMilestones,
         lastSyncTime,
       });
     }
@@ -287,9 +313,90 @@ const server = Bun.serve({
       }
 
       Object.assign(data, updates);
+
+      // Clean up triggered milestones when milestones config changes
+      if ("milestones" in updates) {
+        data.triggeredMilestones = data.triggeredMilestones.filter(
+          (m) => data.milestones.includes(m)
+        );
+      }
+
       await saveData(data);
 
       return jsonResponse({ ok: true, data });
+    }
+
+    // GET /api/config/export
+    if (req.method === "GET" && path === "/api/config/export") {
+      const file = Bun.file(DATA_FILE);
+      const content = await file.text();
+      return new Response(content, {
+        headers: {
+          "Content-Type": "application/json",
+          "Content-Disposition": 'attachment; filename="overlay-config.json"',
+        },
+      });
+    }
+
+    // POST /api/config/import
+    if (req.method === "POST" && path === "/api/config/import") {
+      let body: Record<string, unknown>;
+      try {
+        body = (await req.json()) as Record<string, unknown>;
+      } catch {
+        return errorResponse("Invalid JSON body");
+      }
+
+      if (typeof body.password !== "string" || body.password.length === 0) {
+        return errorResponse("password is required");
+      }
+      if (!ADMIN_PASSWORD || body.password !== ADMIN_PASSWORD) {
+        return errorResponse("Unauthorized", 401);
+      }
+
+      const config = body.config as Record<string, unknown> | undefined;
+      if (!config || typeof config !== "object") {
+        return errorResponse("config object is required");
+      }
+
+      // Validate all fields by running through validateConfig with a dummy password
+      const testBody = { ...config, password: "x" };
+      const validated = validateConfig(testBody as Record<string, unknown>);
+      if ("error" in validated) {
+        return errorResponse(validated.error);
+      }
+
+      const { password: _pw, ...updates } = validated.value;
+      data = { ...DEFAULT_DATA, ...updates };
+      await saveData(data);
+
+      return jsonResponse({ ok: true, data });
+    }
+
+    // POST /api/milestone/triggered
+    if (req.method === "POST" && path === "/api/milestone/triggered") {
+      let body: Record<string, unknown>;
+      try {
+        body = (await req.json()) as Record<string, unknown>;
+      } catch {
+        return errorResponse("Invalid JSON body");
+      }
+
+      const amount = body.amount;
+      if (typeof amount !== "number" || !isFinite(amount) || amount <= 0) {
+        return errorResponse("amount must be a positive finite number");
+      }
+
+      if (!data.milestones.includes(amount)) {
+        return errorResponse("amount is not a configured milestone");
+      }
+
+      if (!data.triggeredMilestones.includes(amount)) {
+        data.triggeredMilestones.push(amount);
+        await saveData(data);
+      }
+
+      return jsonResponse({ ok: true });
     }
 
     // Static files from public/

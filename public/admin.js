@@ -12,15 +12,23 @@
   const displayMode = $("display-mode");
   const rotationField = $("rotation-field");
   const rotationInterval = $("rotation-interval");
+  const themeSelect = $("theme");
   const saveBtn = $("save-btn");
   const feedback = $("feedback");
   const syncStatus = $("sync-status");
   const previewToggle = $("preview-toggle");
   const previewContainer = $("preview-container");
   const previewFrame = $("preview-frame");
+  const exportBtn = $("export-btn");
+  const importBtn = $("import-btn");
+  const importFile = $("import-file");
+  const milestoneList = $("milestone-list");
+  const milestoneInput = $("milestone-input");
+  const milestoneAddBtn = $("milestone-add-btn");
 
   let password = "";
   let pollTimer = null;
+  let milestones = [];
 
   const formatCurrency = (n) =>
     new Intl.NumberFormat("en-US", {
@@ -38,6 +46,20 @@
     }
   }
 
+  function renderMilestones() {
+    milestoneList.innerHTML = "";
+    milestones.sort((a, b) => a - b).forEach((m) => {
+      const item = document.createElement("div");
+      item.className = "milestone-item";
+      item.innerHTML = `<span>$${m.toLocaleString()}</span><button type="button" class="milestone-remove">&times;</button>`;
+      item.querySelector(".milestone-remove").addEventListener("click", () => {
+        milestones = milestones.filter((v) => v !== m);
+        renderMilestones();
+      });
+      milestoneList.appendChild(item);
+    });
+  }
+
   function populateForm(stats) {
     revenueDisplay.value = formatCurrency(stats.revenue);
     revenueGoal.value = stats.revenueGoal;
@@ -45,6 +67,9 @@
     costBudgetCap.value = stats.costBudgetCap;
     displayMode.value = stats.displayMode;
     rotationInterval.value = stats.rotationInterval;
+    themeSelect.value = stats.theme || "cyberpunk";
+    milestones = stats.milestones || [];
+    renderMilestones();
     toggleRotationField();
   }
 
@@ -119,6 +144,9 @@
     const ri = parseInt(rotationInterval.value, 10);
     if (!isNaN(ri)) payload.rotationInterval = ri;
 
+    payload.theme = themeSelect.value;
+    payload.milestones = milestones;
+
     try {
       const res = await fetch("/api/config", {
         method: "POST",
@@ -152,6 +180,69 @@
       saveBtn.textContent = "Save";
     }
   }
+
+  // Config export/import
+  exportBtn.addEventListener("click", () => {
+    window.location.href = "/api/config/export";
+  });
+
+  importBtn.addEventListener("click", () => {
+    importFile.click();
+  });
+
+  importFile.addEventListener("change", async () => {
+    const file = importFile.files[0];
+    if (!file) return;
+
+    try {
+      const text = await file.text();
+      const config = JSON.parse(text);
+
+      const res = await fetch("/api/config/import", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password, config }),
+      });
+
+      if (res.status === 401) {
+        showFeedback("Wrong password", "error");
+        return;
+      }
+
+      const data = await res.json();
+      if (data.ok) {
+        showFeedback("Config imported", "success");
+        const stats = await fetchStats();
+        if (stats) populateForm(stats);
+      } else {
+        showFeedback(data.error || "Import failed", "error");
+      }
+    } catch (e) {
+      showFeedback("Invalid config file", "error");
+    }
+
+    importFile.value = "";
+  });
+
+  // Milestone management
+  milestoneAddBtn.addEventListener("click", () => {
+    const val = parseInt(milestoneInput.value, 10);
+    if (!val || val <= 0) return;
+    if (milestones.includes(val)) {
+      showFeedback("Milestone already exists", "error");
+      return;
+    }
+    milestones.push(val);
+    renderMilestones();
+    milestoneInput.value = "";
+  });
+
+  milestoneInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      milestoneAddBtn.click();
+    }
+  });
 
   unlockBtn.addEventListener("click", unlock);
   passwordInput.addEventListener("keydown", (e) => { if (e.key === "Enter") unlock(); });
