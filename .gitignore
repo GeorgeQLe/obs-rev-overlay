@@ -176,3 +176,6 @@ dist
 
 # Project-specific
 data.json
+tasks/
+.claude/
+obs-revenue-overlay-__interview.md

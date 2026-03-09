@@ -51,7 +51,7 @@ Then in OBS:
 
 | Variable | Description |
 |---|---|
-| `STRIPE_SECRET_KEY` | Your Stripe secret API key |
+| `STRIPE_SECRET_KEY` | Your Stripe API key (restricted key with **Balance: Read** permission is sufficient) |
 | `ADMIN_PASSWORD` | Password for the admin dashboard |
 
 ## Display Modes
