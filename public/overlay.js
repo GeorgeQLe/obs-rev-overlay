@@ -6,6 +6,11 @@
     maximumFractionDigits: 0,
   });
   const formatCurrency = (n) => currencyFmt.format(n);
+  const formatGoal = (n) => {
+    if (n >= 1_000_000 && n % 1_000_000 === 0) return "$" + (n / 1_000_000) + "M";
+    if (n >= 1_000 && n % 1_000 === 0) return "$" + (n / 1_000) + "K";
+    return currencyFmt.format(n);
+  };
 
   const calcPercent = (current, goal) =>
     !goal ? 0 : Math.min(100, Math.max(0, (current / goal) * 100));
@@ -53,9 +58,9 @@
     const costPercent = calcPercent(stats.costTotal, stats.costBudgetCap);
 
     revFill.style.width = revPercent + "%";
-    revGoal.textContent = formatCurrency(stats.revenueGoal);
+    revGoal.textContent = formatGoal(stats.revenueGoal);
     costFill.style.width = costPercent + "%";
-    costGoal.textContent = formatCurrency(stats.costBudgetCap);
+    costGoal.textContent = formatGoal(stats.costBudgetCap);
 
     const prevRev = prevStats ? prevStats.revenue : stats.revenue;
     const prevCost = prevStats ? prevStats.costTotal : stats.costTotal;

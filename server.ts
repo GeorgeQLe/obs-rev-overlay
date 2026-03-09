@@ -7,6 +7,7 @@ const PORT = 4455;
 const DATA_FILE = "./data.json";
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
 const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY;
+const STRIPE_ACCOUNT_ID = process.env.STRIPE_ACCOUNT_ID;
 const STRIPE_POLL_INTERVAL = 30_000;
 const VALID_DISPLAY_MODES = ["both", "rotate", "revenue", "costs", "counter"] as const;
 const VALID_THEMES = ["cyberpunk", "minimal", "retro"] as const;
@@ -42,7 +43,11 @@ let lastFetchTimestamp = 0; // Unix seconds, tracks latest transaction seen
 let lastSyncTime = 0; // Unix ms of last successful Stripe poll
 let lastSyncError: string | null = null;
 let consecutiveFailures = 0;
-const stripe = STRIPE_SECRET_KEY ? new Stripe(STRIPE_SECRET_KEY) : null;
+const stripe = STRIPE_SECRET_KEY
+  ? new Stripe(STRIPE_SECRET_KEY, {
+      ...(STRIPE_ACCOUNT_ID ? { stripeContext: STRIPE_ACCOUNT_ID } : {}),
+    })
+  : null;
 
 // --- Data Helpers ---
 
